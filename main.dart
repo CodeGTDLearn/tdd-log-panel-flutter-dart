@@ -1,19 +1,22 @@
 // @formatter:off
 void main() {
 
-  DartPanel().scalablePanel( 21, ["Simple Panel Scalable", "My First Topic"]);
+  DartPanel().scalablePanel(
+      scale: 21,
+      texts: ["Simple Panel Scalable", "My First Topic"]);
 
-  DartPanel().simplePanel(["Simple Panel Scalable", "My First Topic"]);
+  DartPanel().simplePanel(
+      texts: ["Simple Panel Scalable", "My First Topic"]);
 
-  DartPanel().panel(
+  DartPanel().fullPanel(
         scale: 21,
         margin: 2,
         upSpace: 3,
         downSpace: 3,
-        cornersFormat: Border.BOLD,
-        centerMarksFormat: Border.DOUBLE,
-        horizontalLinesFormat: Border.DOUBLE,
-        verticalLinesFormat: Border.THIN,
+        cornersFormat: _Border.BOLD,
+        centerMarksFormat: _Border.DOUBLE,
+        horizontalLinesFormat: _Border.DOUBLE,
+        verticalLinesFormat: _Border.THIN,
         uppercaseTitle: true,
         centralizeTitle: true,
         titleAndOthers: ["My Panel","First Topic","Second Topic"]);
@@ -21,226 +24,48 @@ void main() {
 
 class DartPanel {
 
-  void simplePanel(List<String> texts) {
-    panel(
+  void simplePanel({
+    required List<String> texts}) {
+    fullPanel(
         scale: 21,
         margin: 5,
         upSpace: 1,
         downSpace: 1,
-        cornersFormat: Border.DOUBLE,
-        centerMarksFormat: Border.DOUBLE,
-        horizontalLinesFormat: Border.THIN,
-        verticalLinesFormat: Border.THIN,
+        cornersFormat: _Border.DOUBLE,
+        centerMarksFormat: _Border.DOUBLE,
+        horizontalLinesFormat: _Border.THIN,
+        verticalLinesFormat: _Border.THIN,
         uppercaseTitle: true,
         centralizeTitle: true,
         titleAndOthers:texts);
   }
 
-  void scalablePanel(int scale, List<String> texts) {
-    panel(
+  void scalablePanel({
+    required int scale,
+    required List<String> texts}) {
+    fullPanel(
         scale: scale,
         margin:5,
         upSpace: 1,
         downSpace: 1,
-        cornersFormat: Border.DOUBLE,
-        centerMarksFormat: Border.DOUBLE,
-        horizontalLinesFormat: Border.THIN,
-        verticalLinesFormat: Border.THIN,
+        cornersFormat: _Border.DOUBLE,
+        centerMarksFormat: _Border.DOUBLE,
+        horizontalLinesFormat: _Border.THIN,
+        verticalLinesFormat: _Border.THIN,
         uppercaseTitle: true,
         centralizeTitle: true,
         titleAndOthers: texts);
   }
 
-  String faceLineCreator(Border corner) {
-    switch (corner) {
-      case Border.BOLD:
-        return BoldFont.FACE_LINE.code;
-      case Border.THIN:
-        return ThinFont.FACE_LINE.code;
-      case Border.DOUBLE:
-        return DoubleFont.FACE_LINE.code;
-      default:
-        return '';
-    }
-  }
-
-  String generateLine(
-      String baseChar,
-      int scale,
-      String BASE_LINE) {
-    return (baseChar * scale).replaceAll(baseChar, BASE_LINE);
-  }
-
-  String upperLine(
-      int scale,
-      Border corner,
-      Border centerMark,
-      Border line) {
-    List<String> borderStylingItems = [];
-    switch (corner) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.UPPER_LEFT_CORNER.code);
-        borderStylingItems.add(BoldFont.UPPER_RIGHT_CORNER.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.UPPER_LEFT_CORNER.code);
-        borderStylingItems.add(ThinFont.UPPER_RIGHT_CORNER.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.UPPER_LEFT_CORNER.code);
-        borderStylingItems.add(DoubleFont.UPPER_RIGHT_CORNER.code);
-        break;
-    }
-
-    switch (centerMark) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.BASE_LINE.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.BASE_LINE.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.BASE_LINE.code);
-        break;
-    }
-
-    switch (line) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.BASE_LINE.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.BASE_LINE.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.BASE_LINE.code);
-        break;
-    }
-
-    String baseline = generateLine('_', scale, borderStylingItems[2]);
-
-    return borderStylingItems[0] + baseline + borderStylingItems[1] + "\n";
-  }
-
-  String middleLine(
-      int scale,
-      Border corner,
-      Border centerMark,
-      Border baseLine) {
-    List<String> borderStylingItems = [];
-    switch (corner) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.MIDDLE_LEFT.code);
-        borderStylingItems.add(BoldFont.MIDDLE_RIGHT.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.MIDDLE_LEFT.code);
-        borderStylingItems.add(ThinFont.MIDDLE_RIGHT.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.MIDDLE_LEFT.code);
-        borderStylingItems.add(DoubleFont.MIDDLE_RIGHT.code);
-        break;
-    }
-
-    switch (centerMark) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.BASE_LINE.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.BASE_LINE.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.BASE_LINE.code);
-        break;
-    }
-
-    switch (baseLine) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.BASE_LINE.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.BASE_LINE.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.BASE_LINE.code);
-        break;
-    }
-
-    var divider = generateLine('_', scale, borderStylingItems[3]);
-
-    return borderStylingItems[0] +
-        divider +
-        borderStylingItems[2] +
-        divider +
-        borderStylingItems[1] +
-        "\n";
-  }
-
-  String bottomLine(
-    int scale,
-    Border corner,
-    Border centerMark,
-    Border baseLine,
-  ) {
-    List<String> borderStylingItems = [];
-    switch (corner) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.FACE_LINE.code);
-        borderStylingItems.add(BoldFont.FACE_LINE.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.FACE_LINE.code);
-        borderStylingItems.add(ThinFont.FACE_LINE.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.FACE_LINE.code);
-        borderStylingItems.add(DoubleFont.FACE_LINE.code);
-        break;
-    }
-
-    switch (centerMark) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.BASE_LINE.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.BASE_LINE.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.BASE_LINE.code);
-        break;
-    }
-
-    switch (baseLine) {
-      case Border.BOLD:
-        borderStylingItems.add(BoldFont.BASE_LINE.code);
-        break;
-      case Border.THIN:
-        borderStylingItems.add(ThinFont.BASE_LINE.code);
-        break;
-      case Border.DOUBLE:
-        borderStylingItems.add(DoubleFont.BASE_LINE.code);
-        break;
-    }
-
-    var baseline = generateLine('_', scale, borderStylingItems[3].toString());
-
-    return borderStylingItems[0] +
-        baseline +
-        borderStylingItems[2] +
-        baseline +
-        borderStylingItems[1] +
-        "\n";
-  }
-
-  void panel({
+  void fullPanel({
     required int scale,
     required int margin,
     required int upSpace,
     required int downSpace,
-    required Border cornersFormat,
-    required Border centerMarksFormat,
-    required Border horizontalLinesFormat,
-    required Border verticalLinesFormat,
+    required _Border cornersFormat,
+    required _Border centerMarksFormat,
+    required _Border horizontalLinesFormat,
+    required _Border verticalLinesFormat,
     required bool uppercaseTitle,
     required bool centralizeTitle,
     required List<String> titleAndOthers,}
@@ -267,17 +92,17 @@ class DartPanel {
     var externalUpSpaces = '\n' * upSpace;
     var externalBottomSpaces = '\n' * downSpace;
 
-    var upperFace = upperLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
-    var divider = middleLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
-    var bottomFace = bottomLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
-    var faceLine = faceLineCreator(verticalLinesFormat);
+    var upperFace = _upperLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
+    var divider = _middleLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
+    var bottomFace = _bottomLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
+    var faceLine = _faceLineCreator(verticalLinesFormat);
 
     var titleTextArea = fullSize.toString();
     var textPreparation = StringBuffer()
       ..write(externalUpSpaces)
       ..write(upperFace)
       ..write(faceLine)
-      ..write('$whitespaceMargin$titleTextArea''s')
+      ..write('$whitespaceMargin $titleTextArea''s')
       ..write(faceLine)
       ..write('\n')
       ..write(divider);
@@ -301,9 +126,190 @@ class DartPanel {
       ..write(externalBottomSpaces);
     print([textPreparation.toString(), formattedTexts]);
   }
+
+  String _faceLineCreator(_Border corner) {
+    switch (corner) {
+      case _Border.BOLD:
+        return _BoldFont.FACE_LINE.code;
+      case _Border.THIN:
+        return _ThinFont.FACE_LINE.code;
+      case _Border.DOUBLE:
+        return _DoubleFont.FACE_LINE.code;
+      default:
+        return '';
+    }
+  }
+
+  String _generateLine(
+      String baseChar,
+      int scale,
+      String BASE_LINE) {
+    return (baseChar * scale).replaceAll(baseChar, BASE_LINE);
+  }
+
+  String _upperLine(
+      int scale,
+      _Border corner,
+      _Border centerMark,
+      _Border line) {
+    List<String> borderStylingItems = [];
+    switch (corner) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.UPPER_LEFT_CORNER.code);
+        borderStylingItems.add(_BoldFont.UPPER_RIGHT_CORNER.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.UPPER_LEFT_CORNER.code);
+        borderStylingItems.add(_ThinFont.UPPER_RIGHT_CORNER.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.UPPER_LEFT_CORNER.code);
+        borderStylingItems.add(_DoubleFont.UPPER_RIGHT_CORNER.code);
+        break;
+    }
+
+    switch (centerMark) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.BASE_LINE.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.BASE_LINE.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
+        break;
+    }
+
+    switch (line) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.BASE_LINE.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.BASE_LINE.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
+        break;
+    }
+
+    String baseline = _generateLine('_', scale, borderStylingItems[2]);
+
+    return borderStylingItems[0] + baseline + borderStylingItems[1] + "\n";
+  }
+
+  String _middleLine(
+      int scale,
+      _Border corner,
+      _Border centerMark,
+      _Border baseLine) {
+    List<String> borderStylingItems = [];
+    switch (corner) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.MIDDLE_LEFT.code);
+        borderStylingItems.add(_BoldFont.MIDDLE_RIGHT.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.MIDDLE_LEFT.code);
+        borderStylingItems.add(_ThinFont.MIDDLE_RIGHT.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.MIDDLE_LEFT.code);
+        borderStylingItems.add(_DoubleFont.MIDDLE_RIGHT.code);
+        break;
+    }
+
+    switch (centerMark) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.BASE_LINE.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.BASE_LINE.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
+        break;
+    }
+
+    switch (baseLine) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.BASE_LINE.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.BASE_LINE.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
+        break;
+    }
+
+    var divider = _generateLine('_', scale, borderStylingItems[3]);
+
+    return borderStylingItems[0] +
+        divider +
+        borderStylingItems[2] +
+        divider +
+        borderStylingItems[1] +
+        "\n";
+  }
+
+  String _bottomLine(
+      int scale,
+      _Border corner,
+      _Border centerMark,
+      _Border baseLine,
+      ) {
+    List<String> borderStylingItems = [];
+    switch (corner) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.FACE_LINE.code);
+        borderStylingItems.add(_BoldFont.FACE_LINE.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.FACE_LINE.code);
+        borderStylingItems.add(_ThinFont.FACE_LINE.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.FACE_LINE.code);
+        borderStylingItems.add(_DoubleFont.FACE_LINE.code);
+        break;
+    }
+
+    switch (centerMark) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.BASE_LINE.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.BASE_LINE.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
+        break;
+    }
+
+    switch (baseLine) {
+      case _Border.BOLD:
+        borderStylingItems.add(_BoldFont.BASE_LINE.code);
+        break;
+      case _Border.THIN:
+        borderStylingItems.add(_ThinFont.BASE_LINE.code);
+        break;
+      case _Border.DOUBLE:
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
+        break;
+    }
+
+    var baseline = _generateLine('_', scale, borderStylingItems[3].toString());
+
+    return borderStylingItems[0] +
+        baseline +
+        borderStylingItems[2] +
+        baseline +
+        borderStylingItems[1] +
+        "\n";
+  }
 }
 
-enum BoldFont {
+enum _BoldFont {
   FACE_LINE('\u2503'),
   BASE_LINE('\u2501'),
   UPPER_LEFT_CORNER('\u250F'),
@@ -315,10 +321,10 @@ enum BoldFont {
 
   final String code;
 
-  const BoldFont(this.code);
+  const _BoldFont(this.code);
 }
 
-enum ThinFont {
+enum _ThinFont {
   FACE_LINE('\u2502'),
   BASE_LINE('\u2500'),
   UPPER_LEFT_CORNER('\u250C'),
@@ -330,10 +336,10 @@ enum ThinFont {
 
   final String code;
 
-  const ThinFont(this.code);
+  const _ThinFont(this.code);
 }
 
-enum DoubleFont {
+enum _DoubleFont {
   FACE_LINE('\u2551'),
   BASE_LINE('\u2550'),
   UPPER_LEFT_CORNER('\u2554'),
@@ -345,8 +351,8 @@ enum DoubleFont {
 
   final String code;
 
-  const DoubleFont(this.code);
+  const _DoubleFont(this.code);
 }
 
-enum Border { BOLD, THIN, DOUBLE }
+enum _Border { BOLD, THIN, DOUBLE }
 // @formatter:on
