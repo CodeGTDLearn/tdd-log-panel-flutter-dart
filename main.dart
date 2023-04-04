@@ -16,7 +16,7 @@ void main() {
         cornersFormat: _Border.BOLD,
         centerMarksFormat: _Border.DOUBLE,
         horizontalLinesFormat: _Border.DOUBLE,
-        verticalLinesFormat: _Border.THIN,
+        lateralLinesFormat: _Border.THIN,
         uppercaseTitle: true,
         centralizeTitle: true,
         titleAndOthers: ["My Panel","First Topic","Second Topic"]);
@@ -34,7 +34,7 @@ class DartPanel {
         cornersFormat: _Border.DOUBLE,
         centerMarksFormat: _Border.DOUBLE,
         horizontalLinesFormat: _Border.THIN,
-        verticalLinesFormat: _Border.THIN,
+        lateralLinesFormat: _Border.THIN,
         uppercaseTitle: true,
         centralizeTitle: true,
         titleAndOthers:texts);
@@ -51,7 +51,7 @@ class DartPanel {
         cornersFormat: _Border.DOUBLE,
         centerMarksFormat: _Border.DOUBLE,
         horizontalLinesFormat: _Border.THIN,
-        verticalLinesFormat: _Border.THIN,
+        lateralLinesFormat: _Border.THIN,
         uppercaseTitle: true,
         centralizeTitle: true,
         titleAndOthers: texts);
@@ -65,14 +65,14 @@ class DartPanel {
     required _Border cornersFormat,
     required _Border centerMarksFormat,
     required _Border horizontalLinesFormat,
-    required _Border verticalLinesFormat,
+    required _Border lateralLinesFormat,
     required bool uppercaseTitle,
     required bool centralizeTitle,
     required List<String> titleAndOthers,}
   ) {
     var estimatedAdjustmentFactor = 3;
     var title = titleAndOthers[0];
-    var marginTitle = scale - (title.length ~/ 2) - estimatedAdjustmentFactor;
+    var marginTitle = scale - (title.length / 2).round() - estimatedAdjustmentFactor;
     var formattedTexts =
     titleAndOthers
        .map((item) => item == title && centralizeTitle ? ' ' * marginTitle + title : item)
@@ -92,42 +92,46 @@ class DartPanel {
     var externalUpSpaces = '\n' * upSpace;
     var externalBottomSpaces = '\n' * downSpace;
 
-    var upperFace = _upperLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
-    var divider = _middleLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
-    var bottomFace = _bottomLine(scale, cornersFormat, centerMarksFormat, horizontalLinesFormat);
-    var faceLine = _faceLineCreator(verticalLinesFormat);
+    var corners = cornersFormat;
+    var centerMark = centerMarksFormat;
+    var horizontalline = horizontalLinesFormat;
+    var lateralLine = lateralLinesFormat;
 
-    var titleTextArea = fullSize.toString();
+    var upperSide = _upperSideCreator(scale, corners, centerMark, horizontalline);
+    var divider = _dividerCreator(scale, corners, centerMark, horizontalline);
+    var bottomSide = _bottomSideCreator(scale, corners, centerMark, horizontalline);
+    var lateralSide = _lateralSideCreator(lateralLine);
+
+    var titleTextArea = ' ' * (fullSize - 1);
     var textPreparation = StringBuffer()
       ..write(externalUpSpaces)
-      ..write(upperFace)
-      ..write(faceLine)
-      ..write('$whitespaceMargin $titleTextArea''s')
-      ..write(faceLine)
+      ..write(upperSide)
+      ..write(lateralSide)
+      ..write('$whitespaceMargin $titleTextArea')
+      ..write(lateralSide)
       ..write('\n')
       ..write(divider);
 
     // "-1" Because the first element in the Array was used as title
     // The discont-number in bodyTextArea/fullsize, subtract the size of "ordinal-ASC" and ") "
-    var bodyTextArea = (fullSize - 4).toString();
+    var bodyTextArea = ' ' * (fullSize - 4);
     var topicEnumeration = 0;
     var ordinalSymbolEnumerator = '\u2070';
     for (int i = formattedTexts.length - 1; i > 0; i--) {
       ++topicEnumeration;
       textPreparation
-        ..write(faceLine)
-        ..write('$whitespaceMargin$topicEnumeration$ordinalSymbolEnumerator) '
-            '$bodyTextArea s')
-        ..write(faceLine)
+        ..write(lateralSide)
+        ..write('$whitespaceMargin$topicEnumeration$ordinalSymbolEnumerator) $bodyTextArea')
+        ..write(lateralSide)
         ..write('\n');
     }
     textPreparation
-      ..write(bottomFace)
+      ..write(bottomSide)
       ..write(externalBottomSpaces);
-    print([textPreparation.toString(), formattedTexts]);
+    print('${textPreparation.toString()}${formattedTexts.toString()}');
   }
 
-  String _faceLineCreator(_Border corner) {
+  String _lateralSideCreator(_Border corner) {
     switch (corner) {
       case _Border.BOLD:
         return _BoldFont.FACE_LINE.code;
@@ -147,57 +151,49 @@ class DartPanel {
     return (baseChar * scale).replaceAll(baseChar, BASE_LINE);
   }
 
-  String _upperLine(
+  String _upperSideCreator(
       int scale,
       _Border corner,
       _Border centerMark,
       _Border line) {
     List<String> borderStylingItems = [];
+
     switch (corner) {
       case _Border.BOLD:
         borderStylingItems.add(_BoldFont.UPPER_LEFT_CORNER.code);
-        borderStylingItems.add(_BoldFont.UPPER_RIGHT_CORNER.code);
-        break;
+        borderStylingItems.add(_BoldFont.UPPER_RIGHT_CORNER.code); break;
       case _Border.THIN:
         borderStylingItems.add(_ThinFont.UPPER_LEFT_CORNER.code);
-        borderStylingItems.add(_ThinFont.UPPER_RIGHT_CORNER.code);
-        break;
+        borderStylingItems.add(_ThinFont.UPPER_RIGHT_CORNER.code); break;
       case _Border.DOUBLE:
         borderStylingItems.add(_DoubleFont.UPPER_LEFT_CORNER.code);
-        borderStylingItems.add(_DoubleFont.UPPER_RIGHT_CORNER.code);
-        break;
+        borderStylingItems.add(_DoubleFont.UPPER_RIGHT_CORNER.code); break;
     }
 
     switch (centerMark) {
       case _Border.BOLD:
-        borderStylingItems.add(_BoldFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_BoldFont.BASE_LINE.code); break;
       case _Border.THIN:
-        borderStylingItems.add(_ThinFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_ThinFont.BASE_LINE.code); break;
       case _Border.DOUBLE:
-        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
     switch (line) {
       case _Border.BOLD:
-        borderStylingItems.add(_BoldFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_BoldFont.BASE_LINE.code); break;
       case _Border.THIN:
-        borderStylingItems.add(_ThinFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_ThinFont.BASE_LINE.code); break;
       case _Border.DOUBLE:
-        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
-    String baseline = _generateLine('_', scale, borderStylingItems[2]);
+    String baseline = _generateLine('_', ((scale * 2)+1), borderStylingItems[2]);
 
     return borderStylingItems[0] + baseline + borderStylingItems[1] + "\n";
   }
 
-  String _middleLine(
+  String _dividerCreator(
       int scale,
       _Border corner,
       _Border centerMark,
@@ -206,45 +202,37 @@ class DartPanel {
     switch (corner) {
       case _Border.BOLD:
         borderStylingItems.add(_BoldFont.MIDDLE_LEFT.code);
-        borderStylingItems.add(_BoldFont.MIDDLE_RIGHT.code);
-        break;
+        borderStylingItems.add(_BoldFont.MIDDLE_RIGHT.code); break;
       case _Border.THIN:
         borderStylingItems.add(_ThinFont.MIDDLE_LEFT.code);
-        borderStylingItems.add(_ThinFont.MIDDLE_RIGHT.code);
-        break;
+        borderStylingItems.add(_ThinFont.MIDDLE_RIGHT.code); break;
       case _Border.DOUBLE:
         borderStylingItems.add(_DoubleFont.MIDDLE_LEFT.code);
-        borderStylingItems.add(_DoubleFont.MIDDLE_RIGHT.code);
-        break;
+        borderStylingItems.add(_DoubleFont.MIDDLE_RIGHT.code); break;
     }
 
     switch (centerMark) {
       case _Border.BOLD:
-        borderStylingItems.add(_BoldFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_BoldFont.BASE_LINE.code); break;
       case _Border.THIN:
-        borderStylingItems.add(_ThinFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_ThinFont.BASE_LINE.code); break;
       case _Border.DOUBLE:
-        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
     switch (baseLine) {
       case _Border.BOLD:
-        borderStylingItems.add(_BoldFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_BoldFont.BASE_LINE.code); break;
       case _Border.THIN:
-        borderStylingItems.add(_ThinFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_ThinFont.BASE_LINE.code); break;
       case _Border.DOUBLE:
-        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
     var divider = _generateLine('_', scale, borderStylingItems[3]);
 
-    return borderStylingItems[0] +
+    return
+        borderStylingItems[0] +
         divider +
         borderStylingItems[2] +
         divider +
@@ -252,55 +240,48 @@ class DartPanel {
         "\n";
   }
 
-  String _bottomLine(
+  String _bottomSideCreator(
       int scale,
       _Border corner,
       _Border centerMark,
       _Border baseLine,
       ) {
     List<String> borderStylingItems = [];
+
     switch (corner) {
       case _Border.BOLD:
-        borderStylingItems.add(_BoldFont.FACE_LINE.code);
-        borderStylingItems.add(_BoldFont.FACE_LINE.code);
-        break;
+        borderStylingItems.add(_BoldFont.LOWER_LEFT_CORNER.code);
+        borderStylingItems.add(_BoldFont.LOWER_RIGHT_CORNER.code); break;
       case _Border.THIN:
-        borderStylingItems.add(_ThinFont.FACE_LINE.code);
-        borderStylingItems.add(_ThinFont.FACE_LINE.code);
-        break;
+        borderStylingItems.add(_ThinFont.LOWER_LEFT_CORNER.code);
+        borderStylingItems.add(_ThinFont.LOWER_RIGHT_CORNER.code); break;
       case _Border.DOUBLE:
-        borderStylingItems.add(_DoubleFont.FACE_LINE.code);
-        borderStylingItems.add(_DoubleFont.FACE_LINE.code);
-        break;
+        borderStylingItems.add(_DoubleFont.LOWER_LEFT_CORNER.code);
+        borderStylingItems.add(_DoubleFont.LOWER_RIGHT_CORNER.code); break;
     }
 
     switch (centerMark) {
       case _Border.BOLD:
-        borderStylingItems.add(_BoldFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_BoldFont.BASE_LINE.code); break;
       case _Border.THIN:
-        borderStylingItems.add(_ThinFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_ThinFont.BASE_LINE.code); break;
       case _Border.DOUBLE:
-        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
     switch (baseLine) {
       case _Border.BOLD:
-        borderStylingItems.add(_BoldFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_BoldFont.BASE_LINE.code); break;
       case _Border.THIN:
-        borderStylingItems.add(_ThinFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_ThinFont.BASE_LINE.code); break;
       case _Border.DOUBLE:
-        borderStylingItems.add(_DoubleFont.BASE_LINE.code);
-        break;
+        borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
-    var baseline = _generateLine('_', scale, borderStylingItems[3].toString());
+    var baseline = _generateLine('_', scale, borderStylingItems[3]);
 
-    return borderStylingItems[0] +
+    return
+        borderStylingItems[0] +
         baseline +
         borderStylingItems[2] +
         baseline +
