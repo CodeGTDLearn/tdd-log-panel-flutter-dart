@@ -6,152 +6,157 @@ void main() {
       texts: ["Simple Panel Scalable", "My First Topic"]);
 
   DartPanel().simplePanel(
-      texts: ["Simple Panel Scalable", "My First Topic"]);
+      texts: ["Simple Panel", "My First Topic"]);
 
-  DartPanel().fullPanel(
+  DartPanel().panel(
         scale: 21,
         margin: 2,
         upSpace: 3,
         downSpace: 3,
         cornersFormat: _Border.BOLD,
         centerMarksFormat: _Border.DOUBLE,
-        horizontalLinesFormat: _Border.DOUBLE,
-        lateralLinesFormat: _Border.THIN,
-        uppercaseTitle: true,
-        centralizeTitle: true,
-        titleAndOthers: ["My Panel","First Topic","Second Topic"]);
+        horizontalFacesFormat: _Border.DOUBLE,
+        lateralFacesFormat: _Border.THIN,
+        isUppercaseTitle: true,
+        isCentralizedTitle: true,
+        titleAndOthers: ["My Panel","First Topic","Second Topic","Third Topic"]);
   }
 
 class DartPanel {
 
   void simplePanel({
     required List<String> texts}) {
-    fullPanel(
+    panel(
         scale: 21,
         margin: 5,
         upSpace: 1,
         downSpace: 1,
         cornersFormat: _Border.DOUBLE,
         centerMarksFormat: _Border.DOUBLE,
-        horizontalLinesFormat: _Border.THIN,
-        lateralLinesFormat: _Border.THIN,
-        uppercaseTitle: true,
-        centralizeTitle: true,
+        horizontalFacesFormat: _Border.THIN,
+        lateralFacesFormat: _Border.THIN,
+        isUppercaseTitle: true,
+        isCentralizedTitle: true,
         titleAndOthers:texts);
   }
 
   void scalablePanel({
     required int scale,
     required List<String> texts}) {
-    fullPanel(
+    panel(
         scale: scale,
         margin:5,
         upSpace: 1,
         downSpace: 1,
         cornersFormat: _Border.DOUBLE,
         centerMarksFormat: _Border.DOUBLE,
-        horizontalLinesFormat: _Border.THIN,
-        lateralLinesFormat: _Border.THIN,
-        uppercaseTitle: true,
-        centralizeTitle: true,
+        horizontalFacesFormat: _Border.THIN,
+        lateralFacesFormat: _Border.THIN,
+        isUppercaseTitle: true,
+        isCentralizedTitle: true,
         titleAndOthers: texts);
   }
 
-  void fullPanel({
+  void panel({
     required int scale,
     required int margin,
     required int upSpace,
     required int downSpace,
     required _Border cornersFormat,
     required _Border centerMarksFormat,
-    required _Border horizontalLinesFormat,
-    required _Border lateralLinesFormat,
-    required bool uppercaseTitle,
-    required bool centralizeTitle,
+    required _Border horizontalFacesFormat,
+    required _Border lateralFacesFormat,
+    required bool isUppercaseTitle,
+    required bool isCentralizedTitle,
     required List<String> titleAndOthers,}
   ) {
     var estimatedAdjustmentFactor = 3;
     var title = titleAndOthers[0];
     var marginTitle = scale - (title.length / 2).round() - estimatedAdjustmentFactor;
-    var formattedTexts =
+    var titleAndTopics =
     titleAndOthers
-       .map((item) => item == title && centralizeTitle ? ' ' * marginTitle + title : item)
-       .map((item) => item == title && uppercaseTitle ? item.toUpperCase() : item)
-       .toList();
+     .map((item) => item == title && isCentralizedTitle ? (' ' * marginTitle) + title : item)
+     .map((item) => item == title && isUppercaseTitle ? item.toUpperCase() : item)
+     .toList();
 
     var marginLimitedBySize = margin < scale ? margin : scale;
 
-    // scale + margin discrepacies eliminated
+    /*╔════════════════════════════════════════╗
+      ║ scale + margin discrepacies eliminated ║
+      ╚════════════════════════════════════════╝*/
     if (marginLimitedBySize.isOdd) --marginLimitedBySize;
     if (scale.isOdd) ++scale;
 
     int fullSize = (scale * 2) - marginLimitedBySize;
     if (fullSize.isEven) ++fullSize; else --fullSize;
 
-    var whitespaceMargin = ' ' * marginLimitedBySize;
+    var topicMargin = (' ' * marginLimitedBySize);
     var externalUpSpaces = '\n' * upSpace;
     var externalBottomSpaces = '\n' * downSpace;
 
-    var corners = cornersFormat;
-    var centerMark = centerMarksFormat;
-    var horizontalline = horizontalLinesFormat;
-    var lateralLine = lateralLinesFormat;
+    var upperFace = _createUpperFace(
+      scale, cornersFormat, centerMarksFormat, horizontalFacesFormat);
 
-    var upperSide = _upperSideCreator(scale, corners, centerMark, horizontalline);
-    var divider = _dividerCreator(scale, corners, centerMark, horizontalline);
-    var bottomSide = _bottomSideCreator(scale, corners, centerMark, horizontalline);
-    var lateralSide = _lateralSideCreator(lateralLine);
+    var dividerFace = _createDividerFace(
+      scale, cornersFormat, centerMarksFormat, horizontalFacesFormat);
 
-    var titleTextArea = ' ' * (fullSize - 1);
+    var bottomFace = _createBottomFace(
+      scale, cornersFormat, centerMarksFormat, horizontalFacesFormat);
+
+    var leftLateralFace = _createLateralFace(lateralFacesFormat);
+    var rightLateralFace = _createLateralFace(lateralFacesFormat);
+
+    var titleTextArea = ' ' * (fullSize - titleAndTopics[0].length - 2);
     var textPreparation = StringBuffer()
       ..write(externalUpSpaces)
-      ..write(upperSide)
-      ..write(lateralSide)
-      ..write('$whitespaceMargin $titleTextArea')
-      ..write(lateralSide)
+      ..write(upperFace)
+      ..write(rightLateralFace)
+      ..write('$topicMargin ${titleAndTopics[0]} $titleTextArea')
+      ..write(leftLateralFace)
       ..write('\n')
-      ..write(divider);
+      ..write(dividerFace);
 
-    // "-1" Because the first element in the Array was used as title
-    // The discont-number in bodyTextArea/fullsize, subtract the size of "ordinal-ASC" and ") "
-    var bodyTextArea = ' ' * (fullSize - 4);
-    var topicEnumeration = 0;
-    var ordinalSymbolEnumerator = '\u2070';
-    for (int i = formattedTexts.length - 1; i > 0; i--) {
-      ++topicEnumeration;
+    /*╔═══════════════════════════════════════════════════════════════╗
+      ║ "-1" Because the first element in the Array was used as title ║
+      ║ The discont-number in fillUpSpaces/fullsize, subtract the size║
+      ║ of "ordinal-ASC" and ") "                                     ║
+      ╚═══════════════════════════════════════════════════════════════╝*/
+    var topicEnumerator = 0;
+    var symbolEnumerator = '\u2070';
+    for (int i = titleAndTopics.length - 1; i > 0; i--) {
+      ++topicEnumerator;
+      var fillUpSpaces = ' ' * (fullSize - titleAndTopics[topicEnumerator].length - 4);
       textPreparation
-        ..write(lateralSide)
-        ..write('$whitespaceMargin$topicEnumeration$ordinalSymbolEnumerator) $bodyTextArea')
-        ..write(lateralSide)
+        ..write(leftLateralFace)
+        ..write(
+            '$topicMargin'
+            '$topicEnumerator'
+            '$symbolEnumerator) '
+            '${titleAndTopics[topicEnumerator]}'
+            '$fillUpSpaces')
+        ..write(leftLateralFace)
         ..write('\n');
     }
+
     textPreparation
-      ..write(bottomSide)
+      ..write(bottomFace)
       ..write(externalBottomSpaces);
-    print('${textPreparation.toString()}${formattedTexts.toString()}');
+
+    print('$textPreparation');
   }
 
-  String _lateralSideCreator(_Border corner) {
+  String _createLateralFace(_Border corner) {
     switch (corner) {
-      case _Border.BOLD:
-        return _BoldFont.FACE_LINE.code;
-      case _Border.THIN:
-        return _ThinFont.FACE_LINE.code;
-      case _Border.DOUBLE:
-        return _DoubleFont.FACE_LINE.code;
-      default:
-        return '';
+      case _Border.BOLD:   return _BoldFont.FACE_LINE.code;
+      case _Border.THIN:   return _ThinFont.FACE_LINE.code;
+      case _Border.DOUBLE: return _DoubleFont.FACE_LINE.code;
+      default:             return '';
     }
   }
 
-  String _generateLine(
-      String baseChar,
-      int scale,
-      String BASE_LINE) {
-    return (baseChar * scale).replaceAll(baseChar, BASE_LINE);
-  }
 
-  String _upperSideCreator(
+
+  String _createUpperFace(
       int scale,
       _Border corner,
       _Border centerMark,
@@ -188,12 +193,12 @@ class DartPanel {
         borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
-    String baseline = _generateLine('_', ((scale * 2)+1), borderStylingItems[2]);
+    String upperFace = _faceGenerator('_', ((scale * 2)+1), borderStylingItems[2]);
 
-    return borderStylingItems[0] + baseline + borderStylingItems[1] + "\n";
+    return borderStylingItems[0] + upperFace + borderStylingItems[1] + "\n";
   }
 
-  String _dividerCreator(
+  String _createDividerFace(
       int scale,
       _Border corner,
       _Border centerMark,
@@ -229,18 +234,18 @@ class DartPanel {
         borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
-    var divider = _generateLine('_', scale, borderStylingItems[3]);
+    var panelDivider = _faceGenerator('_', scale, borderStylingItems[3]);
 
     return
         borderStylingItems[0] +
-        divider +
+        panelDivider +
         borderStylingItems[2] +
-        divider +
+        panelDivider +
         borderStylingItems[1] +
         "\n";
   }
 
-  String _bottomSideCreator(
+  String _createBottomFace(
       int scale,
       _Border corner,
       _Border centerMark,
@@ -278,15 +283,22 @@ class DartPanel {
         borderStylingItems.add(_DoubleFont.BASE_LINE.code); break;
     }
 
-    var baseline = _generateLine('_', scale, borderStylingItems[3]);
+    var bottonFace = _faceGenerator('_', scale, borderStylingItems[3]);
 
     return
         borderStylingItems[0] +
-        baseline +
+        bottonFace +
         borderStylingItems[2] +
-        baseline +
+        bottonFace +
         borderStylingItems[1] +
         "\n";
+  }
+
+  String _faceGenerator(
+      String baseChar,
+      int scale,
+      String BASE_LINE) {
+    return (baseChar * scale).replaceAll(baseChar, BASE_LINE);
   }
 }
 
